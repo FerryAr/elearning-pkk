@@ -66,6 +66,6 @@ class User extends BaseController {
             array_push($arr, ['id' => $id, 'username' => $username, 'email'=>$email, 'role_id'=>$role_id]);
         }
         header("Content-Type: application/json");
-        echo json_encode($arr);
+        
     }
 }
