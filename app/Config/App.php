@@ -23,8 +23,8 @@ class App extends BaseConfig
      *
      * @var string
      */
-    public $baseURL = 'http://127.0.0.1/elearning-pkk/';
-
+    //public $baseURL = 'http://192.168.98.49/elearning-pkk/';
+    public $baseURL = 'http://127.0.0.1/elearning-pkk';
     /**
      * --------------------------------------------------------------------------
      * Index File
