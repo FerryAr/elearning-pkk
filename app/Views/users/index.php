@@ -82,8 +82,8 @@
                         <?php foreach($role as $r) { ?>
                           <option value="<?= $r->id ?>"><?= $r->name ?></option>
                         <?php } ?>
-                      </select>
-                    </div>
+		      </select>
+		    </div>
                 </form>
               </div>
             </div>

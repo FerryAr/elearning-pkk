@@ -40,7 +40,7 @@
                   <td><?= $ds->email ?></td>
                   <td><?= $ds->name?></td>
                   <td>
-                    <a role="button" class="btn btn-primary btn-md" data-id="<?= $ds->id ?>" data-toggle="modal" data-target="#edit">Edit</a>
+                    <a id="edit-btn" role="button" class="btn btn-primary btn-md" data-id="<?= $ds->id ?>" data-toggle="modal" data-target="#edit">Edit</a>
                     <a role="button" class="btn btn-danger btn-md" href="<?= base_url() ?>User/delete">Hapus</a>
                   </td>
                 <?php } ?>
@@ -84,6 +84,11 @@
                         <?php } ?>
                       </select>
                     </div>
+                    <div class="form-group">
+                      <label for="password">Password
+                      </label>
+                      <input type="password" id="password" name="password" class="form-control">
+                    </div>
                 </form>
               </div>
             </div>
@@ -113,7 +118,8 @@
 <script src="<?php echo base_url();?>/assets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="<?php echo base_url();?>/assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <script>
-  $('#masteruser').DataTable({
+  $(document).ready(function () {
+    $('#masteruser').DataTable({
       processing: true,
       "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
       "paging": true,
@@ -122,7 +128,29 @@
       "ordering": true,
       "info": true,
       "autoWidth": false,
+    });
+    $('#edit-btn').on('click', function (e) {
+      let id = $(e.relatedTarget).data("id");
+      $.ajax({
+        type: "POST",
+        url: "<?= base_url('User/json') ?>",
+        data: {
+          'id':  id,
+        },
+        dataType: "json",
+        success: function (response) {
+          console.log(response)
+          $.each(response, function (key, value) { 
+             
+          });
+        },
+        error: function (request, status, error) {
+          console.log(request.responseText);
+        }
+      });
+    });
   });
+
     // var t = $('#masteruser').DataTable({
     //       processing: true,
     //       serverSide: true,
