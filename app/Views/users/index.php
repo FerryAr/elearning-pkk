@@ -5,7 +5,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0 text-dark"><?= $page ?></h1>
+           <h1 class="m-0 text-dark"><?= $page ?></h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -40,7 +40,7 @@
                   <td><?= $ds->email ?></td>
                   <td><?= $ds->name?></td>
                   <td>
-                    <a role="button" class="btn btn-primary btn-md" data-id="<?= $ds->id ?>" data-toggle="modal" data-target="#edit">Edit</a>
+                    <a id="edit-btn" role="button" class="btn btn-primary btn-md" data-id="<?= $ds->id ?>" data-toggle="modal" data-target="#edit">Edit</a>
                     <a role="button" class="btn btn-danger btn-md" href="<?= base_url() ?>User/delete">Hapus</a>
                   </td>
                 <?php } ?>
@@ -66,25 +66,31 @@
                 </button>
               </div>
               <div class="modal-body">
-                <form method="POST" action="<?= base_url() ?>User/edit">
-                    <input type="hidden" name="id" id="id" value=""/>
-                    <div class="form-group">
-                      <label for="username">Username</label>
-                      <input type="text" name="username" id="username" class="form-control"/>
-                    </div>
-                    <div class="form-group">
-                      <label for="email">Email</label>
-                      <input type="email" name="email" id="email" class="form-control"/>
-                    </div>
-                    <div class="form-group">
-                      <label for="role">Role</label>
-                      <select class="form-control" id="role" name="role">
-                        <?php foreach($role as $r) { ?>
-                          <option value="<?= $r->id ?>"><?= $r->name ?></option>
-                        <?php } ?>
-		      </select>
-		    </div>
-                </form>
+                  <input type="text" name="user_id" id="user_id"/>
+                  <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" class="form-control"/>
+                  </div>
+                  <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" class="form-control"/>
+                  </div>
+                  <div class="form-group">
+                    <label for="role">Role</label>
+                    <select class="form-control" id="role" name="role">
+                      <?php foreach($role as $r) { ?>
+                        <option value="<?= $r->id ?>"><?= $r->name ?></option>
+                      <?php } ?>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="password">Password
+                    </label>
+                    <input type="password" id="password" name="password" class="form-control">
+                  </div>
+              </div>
+              <div class="modal-footer">
+              <input type="button" name="submit" class="btn btn-md btn-info" id="submit" value="Submit"/>
               </div>
             </div>
           </div>
@@ -113,7 +119,8 @@
 <script src="<?php echo base_url();?>/assets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="<?php echo base_url();?>/assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <script>
-  $('#masteruser').DataTable({
+  $(document).ready(function () {
+    $('#masteruser').DataTable({
       processing: true,
       "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
       "paging": true,
@@ -122,7 +129,60 @@
       "ordering": true,
       "info": true,
       "autoWidth": false,
+    });
+    $('#edit').on('show.bs.modal', function (e) {
+      let id = $(e.relatedTarget).data("id");
+      console.log(id);
+      $.ajax({
+        type: "POST",
+        url: "<?= base_url('User/json') ?>",
+        data: {
+          'id':  id,
+        },
+        dataType: "json",
+        success: function (response) {
+          console.log(response)
+          $.each(response, function (key, value) { 
+             $('#user_id').val(id);
+             $('#username').val(value.username);
+             $('#email').val(value.email);
+             let role_id = value.role_id;
+             $('#role').val(role_id);
+          });
+        },
+        error: function (request, status, error) {
+          console.log(request.responseText);
+        }
+      });
+    });
+    $('#submit').on('click', function (e) {
+      let id = $('#user_id').val();
+      console.log(id);
+      let username = $('#username').val();
+      let email = $('#email').val();
+      let password = $('#password').val();
+      let role = $('#role option:selected').val();
+      $.ajax({
+        type: "POST",
+        url: "<?= base_url() ?>/User/edit/"+id,
+        data: {
+          'id': id,
+          'username': username,
+          'email': email,
+          'role': role,
+          'password': password
+        },
+        dataType: "json",
+        success: function (response) {
+          console.log(response);
+        },
+        error: function (request, status, error) {
+          console.log(request.responseText);
+        }
+      });
+    });
   });
+
     // var t = $('#masteruser').DataTable({
     //       processing: true,
     //       serverSide: true,
@@ -150,3 +210,4 @@
     //   });
     //   $.fn.dataTable.ext.errMode = 'throw';
 </script>
+ 

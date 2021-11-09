@@ -49,23 +49,65 @@ class User extends BaseController {
         echo view('_template/footer');
     }
     public function json() {
-        $request = service('request');
-        $id = $request->getVar('id');
-        $arr = [];
-        $db = db_connect();
-        $query = $db->table('users')
-            ->select('users.id, users.username, users.email, auth_groups_users.group_id')
-            ->join('auth_groups_users', 'auth_groups_users.user_id=users.id', 'left')
-            ->where('users.id', $id)
-            ->get()->getResult();
-        foreach($query as $q) {
-            $id = $q->id;
-            $username = $q->username;
-            $email = $q->email;
-            $role_id = $q->group_id;
-            array_push($arr, ['id' => $id, 'username' => $username, 'email'=>$email, 'role_id'=>$role_id]);
+        if($this->request->isAJAX()) {
+            $request = service('request');
+            $id = $request->getPost('id');
+            $arr = [];
+            $db = db_connect();
+            $query = $db->table('users')
+                ->select('users.id, users.username, users.email, auth_groups_users.group_id')
+                ->join('auth_groups_users', 'auth_groups_users.user_id=users.id', 'left')
+                ->where('users.id', $id)
+                ->get()->getResult();
+            foreach($query as $q) {
+                $id = $q->id;
+                $username = $q->username;
+                $email = $q->email;
+                $role_id = $q->group_id;
+                array_push($arr, ['id' => $id, 'username' => $username, 'email'=>$email, 'role_id'=>$role_id]);
+            }
+            header("Content-Type: application/json");
+            echo json_encode($arr);
         }
-        header("Content-Type: application/json");
-        echo json_encode($arr);
+    }
+    public function edit()
+    {
+        $users = model(UserModel::class);
+        $request = service('request');
+        if($this->request->isAJAX()) {
+            $id = $request->getVar('id');
+            $username = $request->getPost('username');
+            $email = $request->getPost('password');
+            $password = $request->getPost('password');
+            $password_hash = \Myth\Auth\Password::hash($password);
+            $user = $users->where('id', $id);
+            $user->username = $username;
+            $user->email = $email;
+            $user->password = $password_hash;
+
+            if(!$users->save($user)) {
+                $arr = array(
+                    'msg' => 'Edit User gagal!',
+                    'id' => $id
+                );
+                header('Content-type: application/json');
+                echo json_encode($arr);
+            }
+
+            $db = db_connect();
+            $group_id = $request->getPost('role');
+            $builder = $db->table('auth_group_users');
+            $builder->set('group_id', $group_id);
+            $builder->where('user_id', $id);
+
+            if(!$builder->update()) {
+                $arr = array(
+                    'msg' => 'Edit User gagal!'
+                );
+                header('Content-type: application/json');
+                echo json_encode($arr);
+            }
+            
+        }
     }
 }
