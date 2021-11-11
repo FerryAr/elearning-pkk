@@ -22,13 +22,14 @@ class User extends BaseController {
         ->get()->getResult();
     }
     public function index() {
-        //if(logged_in()) {
-            //if(!in_groups(1)) {
-                //return redirect()->to('home');
-            //}
-        //} else {
-        //    return redirect()->to('login');
-        //}
+        helper('auth');
+        if(logged_in()) {
+            if(!in_groups(2)) {
+                return redirect()->to('home');
+            }
+        } else {
+           return redirect()->to('login');
+        }
         $db = db_connect();
         $query = $db->table('users')
         ->select('users.id, users.username, users.email, auth_groups.name')
@@ -70,44 +71,119 @@ class User extends BaseController {
             echo json_encode($arr);
         }
     }
-    public function edit()
-    {
-        $users = model(UserModel::class);
+    public function create() {
+        helper('date');
         $request = service('request');
         if($this->request->isAJAX()) {
-            $id = $request->getVar('id');
+            $db = db_connect();
             $username = $request->getPost('username');
-            $email = $request->getPost('password');
+            $email = $request->getPost('email');
             $password = $request->getPost('password');
             $password_hash = \Myth\Auth\Password::hash($password);
-            $user = $users->where('id', $id);
-            $user->username = $username;
-            $user->email = $email;
-            $user->password = $password_hash;
-
-            if(!$users->save($user)) {
+            $now = date("Y-m-d H:i:s", now());
+            $data = array(
+                'email' => $email,
+                'username' => $username,
+                'password_hash' => $password_hash,
+                'active' => 1,
+                'created_at' => $now,
+                'updated_at' => $now
+            );
+            $users = $db->table('users');
+            if($users->insert($data)) {
+                $user_id = $db->insertID();
+                $group_id = $request->getPost('role');
+                $builder = $db->table('auth_groups_users');
+                $data_group = array(
+                    'group_id' => $group_id,
+                    'user_id' => $user_id
+                );
+                if($builder->insert($data_group)) {
+                    $arr = array(
+                        'msg' => 'Tambah User Berhasil!',
+                    );
+                    header('Content-type: application/json');
+                    echo json_encode($arr);
+                } else {
+                    $arr = array(
+                        'msg' => 'User berhasil ditambahkan namun gagal menetapkan role di user ini, Kemungkinan akun tidak dapat digunakan',
+                    );
+                    header('Content-type: application/json');
+                    echo json_encode($arr);
+                }
+            } else {
                 $arr = array(
-                    'msg' => 'Edit User gagal!',
-                    'id' => $id
+                    'msg' => 'Tambah User gagal!',
                 );
                 header('Content-type: application/json');
                 echo json_encode($arr);
             }
-
+ 
+        }
+    }
+    public function edit()
+    {
+        helper('date');
+        $request = service('request');
+        if($this->request->isAJAX()) {
             $db = db_connect();
+            $id = $request->getVar('id');
+            $username = $request->getPost('username');
+            $email = $request->getPost('email');
+            $now = date("Y-m-d H:i:s", now());
+            $users = $db->table('users');
+            $users->set('email', $email);
+            $users->set('username', $username);
+            if(isset($password)) {
+                $password = $request->getPost('password');
+                $password_hash = \Myth\Auth\Password::hash($password);
+                $users->set('password_hash', $password_hash);
+            }
+            $users->set('updated_at', $now);    
+            $users->where('id', $id);
             $group_id = $request->getPost('role');
-            $builder = $db->table('auth_group_users');
+            $builder = $db->table('auth_groups_users');
             $builder->set('group_id', $group_id);
             $builder->where('user_id', $id);
-
-            if(!$builder->update()) {
+            if(!$users->update()) {
                 $arr = array(
-                    'msg' => 'Edit User gagal!'
+                    'msg' => 'Edit User gagal!',
                 );
                 header('Content-type: application/json');
                 echo json_encode($arr);
+            } else {
+                if(!$builder->update()) {
+                    $arr = array(
+                        'msg' => 'Edit User berhasil namun Edit role gagal!',
+                    );
+                    header('Content-type: application/json');
+                    echo json_encode($arr);
+                } else {
+                    $arr = array(
+                        'msg' => 'Edit User berhasil!',
+                    );
+                    header('Content-type: application/json');
+                    echo json_encode($arr);
+                }
             }
             
+        }
+    }
+    public function delete()
+    {
+        $session = \Config\Services::session();
+        if($this->request->getGet('id')) {
+            $id = $this->request->getGet('id');
+            $db = db_connect();
+            $users = $db->table('users');
+            if($users->delete(['id' => $id])) {
+                $session->setFlashdata('msg', 'Hapus User berhasil');
+                return redirect()->to('User');
+            }
+            else {
+                $session->setFlashdata('msg', 'Hapus User gagal');
+                return redirect()->to('User');
+            }
         }
     }
 }
