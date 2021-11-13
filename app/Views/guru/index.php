@@ -31,7 +31,7 @@
           <div class="col-md-6 mb-3">
           <a role="button" data-toggle="modal" data-target="#create" class="btn btn-primary btn-md">Create Data</a>
           <button type="button" class="btn btn-secondary btn-md" data-toggle="modal" data-target="#import">Import Data</button>
-          <a href="<?= base_url('guru/export') ?>" class="btn btn-success btn-md">Export Data</a>
+          <a href="<?= base_url('guru/export_guru') ?>" class="btn btn-success btn-md">Export Data</a>
           </div>
           <div class="d-flex justify-content-end mb-3">
             <button type="button" class="btn btn-info btn-md" id="guru-not-user">Tampilkan Semua Guru</button>
