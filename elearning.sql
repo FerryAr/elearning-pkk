@@ -72,7 +72,8 @@ CREATE TABLE `auth_groups_users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `auth_groups_users` (`group_id`, `user_id`) VALUES
-(1,	1);
+(2,	1),
+(3,	5);
 
 DROP TABLE IF EXISTS `auth_logins`;
 CREATE TABLE `auth_logins` (
@@ -85,7 +86,7 @@ CREATE TABLE `auth_logins` (
   PRIMARY KEY (`id`),
   KEY `email` (`email`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
 
 INSERT INTO `auth_logins` (`id`, `ip_address`, `email`, `user_id`, `date`, `success`) VALUES
 (2,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-09-19 13:29:28',	1),
@@ -104,7 +105,28 @@ INSERT INTO `auth_logins` (`id`, `ip_address`, `email`, `user_id`, `date`, `succ
 (15,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-05 20:01:23',	1),
 (16,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-06 03:58:54',	1),
 (17,	'127.0.0.1',	'ferryar789@gmail.com',	NULL,	'2021-11-06 21:12:21',	0),
-(18,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-06 21:12:31',	1);
+(18,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-06 21:12:31',	1),
+(19,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-07 16:58:33',	1),
+(20,	'192.168.98.42',	'ferryar789@gmail.com',	NULL,	'2021-11-07 17:30:52',	0),
+(21,	'192.168.98.42',	'ferryar789@gmail.com',	NULL,	'2021-11-07 17:31:04',	0),
+(22,	'192.168.98.42',	'ferryar789@gmail.com',	1,	'2021-11-07 17:31:17',	1),
+(23,	'127.0.0.1',	'ferryar789@gmail.com',	NULL,	'2021-11-10 07:04:10',	0),
+(24,	'127.0.0.1',	'ferryar789@gmail.com',	NULL,	'2021-11-10 07:04:19',	0),
+(25,	'127.0.0.1',	'azrl78',	NULL,	'2021-11-10 07:04:51',	0),
+(26,	'127.0.0.1',	'azrl78',	NULL,	'2021-11-10 07:05:09',	0),
+(27,	'127.0.0.1',	'ferryar789@gmail.com',	NULL,	'2021-11-10 07:08:46',	0),
+(28,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-10 07:09:20',	1),
+(29,	'127.0.0.1',	'azrl78',	NULL,	'2021-11-10 07:11:49',	0),
+(30,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-10 07:12:03',	1),
+(31,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-10 07:12:48',	1),
+(32,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-10 15:25:59',	1),
+(33,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-10 17:00:48',	1),
+(34,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-10 17:01:33',	1),
+(35,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-11 09:33:46',	1),
+(36,	'127.0.0.1',	'ferryar789@gmail.com',	NULL,	'2021-11-12 06:03:44',	0),
+(37,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-12 06:03:54',	1),
+(38,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-12 15:38:40',	1),
+(39,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-13 15:50:40',	1);
 
 DROP TABLE IF EXISTS `auth_permissions`;
 CREATE TABLE `auth_permissions` (
@@ -160,9 +182,14 @@ CREATE TABLE `guru` (
   `nip` varchar(256) NOT NULL,
   `nama_guru` varchar(256) NOT NULL,
   `email` varchar(256) NOT NULL,
+  `alamat` text NOT NULL,
+  `no_telp` varchar(15) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
+INSERT INTO `guru` (`id`, `nip`, `nama_guru`, `email`, `alamat`, `no_telp`) VALUES
+(1,	'1001',	'guru1',	'guru1@gmail.com',	'Wonosobo',	'+628'),
+(2,	'1002',	'guru2',	'guru2@gmail.com',	'test',	'62');
 
 DROP TABLE IF EXISTS `jurusan`;
 CREATE TABLE `jurusan` (
@@ -259,9 +286,10 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 INSERT INTO `users` (`id`, `email`, `username`, `password_hash`, `reset_hash`, `reset_at`, `reset_expires`, `activate_hash`, `status`, `status_message`, `active`, `force_pass_reset`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1,	'ferryar789@gmail.com',	'azrl78',	'$2y$10$Pvoyy4nSewhaRQRgmG/Vde0ipwSDo9eTnHeum7Hngr88U7RpX0K/K',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1,	0,	'2021-09-16 05:51:51',	'2021-09-16 05:51:51',	NULL);
+(1,	'ferryar789@gmail.com',	'azrl78',	'$2y$10$cp.R4vNub1bGffM1ehG1X.LMFvL7bJqgTzPhv08MfdlmNjVMFgq76',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1,	0,	'2021-09-16 05:51:51',	'2021-11-10 19:22:41',	NULL),
+(5,	'guru1@gmail.com',	'guru1',	'$2y$10$33tIv1evCSzie5xbx41DNugj9EFh2FiEhT7qdfz.1jtyK8b6yRlMS',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1,	0,	'2021-11-10 20:05:49',	'2021-11-10 20:05:49',	NULL);
 
--- 2021-11-07 22:55:40
+-- 2021-11-13 23:06:05
