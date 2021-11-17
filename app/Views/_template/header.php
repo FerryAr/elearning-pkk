@@ -173,10 +173,16 @@
         </div> -->
         <?php
           $db = db_connect();
-          $user_data = $db->table('users')
-                    ->select('admin.first_name, admin.last_name')
-                    ->join('admin', 'admin.id_user=users.id', 'left')
-                    ->get()->getRow();
+          if(in_groups(2)) {
+            $user_data = $db->table('users')
+            ->select('admin.first_name, admin.last_name')
+            ->join('admin', 'admin.id_user=users.id', 'left')
+            ->get()->getRow();
+          } else if(in_groups(3)) {
+            // $user_data = $db->table('users')
+            // ->select('dosen.')
+          }
+
         ?>
         <div class="info">
           <a href="#" class="d-block"><?php echo $user_data->first_name ?></a>

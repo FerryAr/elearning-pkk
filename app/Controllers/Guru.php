@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use CodeIgniter\Commands\Server\Serve;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as ReaderXlsx;
@@ -24,7 +23,7 @@ class Guru extends BaseController
         }
         $db = db_connect();
         $query = $db->table('guru')
-            ->select('guru.id, guru.nip, guru.nama_guru, guru.email, guru.alamat, guru.no_telp')
+            ->select('guru.id, guru.nip, guru.first_name, guru.last_name, guru.email, guru.alamat, guru.no_telp')
             ->join('users', 'guru.email=users.email', 'left')
             ->join('auth_groups_users', 'users.id=auth_groups_users.user_id')
             ->where('auth_groups_users.group_id', 3)
@@ -44,13 +43,14 @@ class Guru extends BaseController
         if($this->request->isAJAX()) {
             $db = db_connect();
             $query = $db->table('guru')
-                ->select('guru.id, guru.nip, guru.nama_guru, guru.email, guru.alamat, guru.no_telp')
+                ->select('guru.id, guru.nip, guru.first_name, guru.last_name, guru.email, guru.alamat, guru.no_telp')
                 ->get()->getResult();
             foreach($query as $q) {
                 array_push($arr, array(
                     'id' => $q->id,
                     'nip' => $q->nip,
-                    'nama_guru' => $q->nama_guru,
+                    'first_name' => $q->first_name,
+                    'last_name' => $q->last_name,
                     'email' => $q->email,
                     'alamat' => $q->alamat,
                     'no_telp' => $q->no_telp,
@@ -68,7 +68,8 @@ class Guru extends BaseController
             $db = db_connect();
             $data = array(
                 'nip' => $request->getPost('nip'),
-                'nama_guru' => $request->getPost('nama_guru'),
+                'first_name' => $request->getPost('first_name'),
+                'last_name' => $request->getPost('last_name'),
                 'email' => $request->getPost('email'),
                 'alamat' => $request->getPost('alamat'),
                 'no_telp' => $request->getPost('no_telp'),
@@ -96,7 +97,8 @@ class Guru extends BaseController
             $db = db_connect();
             $data = array(
                 'nip' => $request->getPost('nip'),
-                'nama_guru' => $request->getPost('nama_guru'),
+                'fist_name' => $request->getPost('first_name'),
+                'last_name' => $request->getPost('last_name'),
                 'email' => $request->getPost('email'),
                 'alamat' => $request->getPost('alamat'),
                 'no_telp' => $request->getPost('no_telp'),
@@ -143,17 +145,18 @@ class Guru extends BaseController
             $id = $this->request->getPost('id');
             $db = db_connect();
             $query = $db->table('guru')
-                ->select('guru.id, guru.nip, guru.nama_guru, guru.email, guru.alamat, guru.no_telp')
+                ->select('guru.id, guru.nip, guru.first_name, guru.last_name, guru.email, guru.alamat, guru.no_telp')
                 ->where('guru.id', $id)
                 ->get()->getResult();
             foreach($query as $q) {
                 $id = $q->id;
                 $nip = $q->nip;
-                $nama_guru = $q->nama_guru;
+                $first_name = $q->first_name;
+                $last_name = $q->last_name;
                 $email = $q->email;
                 $alamat = $q->alamat;
                 $no_telp = $q->no_telp;
-                array_push($arr, ['id' => $id, 'nip' => $nip, 'nama_guru' => $nama_guru, 'email' => $email, 'alamat' => $alamat, 'no_telp' => $no_telp]);
+                array_push($arr, ['id' => $id, 'nip' => $nip, 'first_name' => $first_name, 'last_name' => $last_name, 'email' => $email, 'alamat' => $alamat, 'no_telp' => $no_telp]);
                 // array_push($arr, [
                 //     'id' => $q->id,
                 //     'nip' => $q->nip,
@@ -198,14 +201,16 @@ class Guru extends BaseController
                 continue;
             }
             $nip = $row[0];
-            $nama_guru = $row[1];
-            $email = $row[2];
-            $no_telp = $row[3];
-            $alamat = $row[4];
+            $first_name = $row[1];
+            $last_name = $row[2];
+            $email = $row[3];
+            $no_telp = $row[4];
+            $alamat = $row[5];
             $cekNip = $db->table('guru')->where('nip', $nip)->get()->getResult();
             if(count($cekNip) > 0) {
                 $query = $db->table('guru')->where('nip', $nip)->update([
-                    'nama_guru' => $nama_guru,
+                    'first_name' => $first_name,
+                    'last_name' => $last_name,
                     'email' => $email,
                     'no_telp' => $no_telp,
                     'alamat' => $alamat
@@ -220,7 +225,8 @@ class Guru extends BaseController
             } else {
                 $query = $db->table('guru')->insert([
                     'nip' => $nip,
-                    'nama_guru' => $nama_guru,
+                    'first_name' => $first_name,
+                    'last_name' => $last_name,
                     'email' => $email,
                     'no_telp' => $no_telp,
                     'alamat' => $alamat
@@ -239,21 +245,23 @@ class Guru extends BaseController
         $db = db_connect();
         $spreadsheet = new Spreadsheet();
         $query = $db->table('guru')
-            ->select('guru.id, guru.nip, guru.nama_guru, guru.email, guru.alamat, guru.no_telp')
+            ->select('guru.id, guru.nip, guru.first_name, guru.last_name, guru.email, guru.alamat, guru.no_telp')
             ->get()->getResult();
         $spreadsheet->setActiveSheetIndex(0);
         $spreadsheet->getActiveSheet()->setCellValue('A1', 'NIP');
-        $spreadsheet->getActiveSheet()->setCellValue('B1', 'Nama Guru');
-        $spreadsheet->getActiveSheet()->setCellValue('C1', 'Email');
-        $spreadsheet->getActiveSheet()->setCellValue('D1', 'No Telp');
-        $spreadsheet->getActiveSheet()->setCellValue('E1', 'Alamat');
+        $spreadsheet->getActiveSheet()->setCellValue('B1', 'Nama Depan');
+        $spreadsheet->getActiveSheet()->setCellValue('C1', 'Nama Belakang');
+        $spreadsheet->getActiveSheet()->setCellValue('D1', 'Email');
+        $spreadsheet->getActiveSheet()->setCellValue('E1', 'No Telp');
+        $spreadsheet->getActiveSheet()->setCellValue('F1', 'Alamat');
         $i = 2;
         foreach($query as $row) {
             $spreadsheet->getActiveSheet()->setCellValue('A' . $i, $row->nip);
-            $spreadsheet->getActiveSheet()->setCellValue('B' . $i, $row->nama_guru);
-            $spreadsheet->getActiveSheet()->setCellValue('C' . $i, $row->email);
-            $spreadsheet->getActiveSheet()->setCellValue('D' . $i, $row->no_telp);
-            $spreadsheet->getActiveSheet()->setCellValue('E' . $i, $row->alamat);
+            $spreadsheet->getActiveSheet()->setCellValue('B' . $i, $row->first_name);
+            $spreadsheet->getActiveSheet()->setCellValue('C' . $i, $row->last_name);
+            $spreadsheet->getActiveSheet()->setCellValue('D' . $i, $row->email);
+            $spreadsheet->getActiveSheet()->setCellValue('E' . $i, $row->no_telp);
+            $spreadsheet->getActiveSheet()->setCellValue('F' . $i, $row->alamat);
             $i++;
         }
         $writer = new Xlsx($spreadsheet);
@@ -261,7 +269,9 @@ class Guru extends BaseController
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
+        //$writer->save($filename);
+        ob_end_clean();
         $writer->save('php://output');
-        return redirect()->to('guru');
+        die();
     }
 }

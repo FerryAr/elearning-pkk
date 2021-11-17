@@ -46,8 +46,8 @@
                   <td><?= $ds->email ?></td>
                   <td><?= $ds->name?></td>
                   <td>
-                    <a id="edit-btn" role="button" class="btn btn-info btn-md" data-id="<?= $ds->id ?>" data-toggle="modal" data-target="#edit">Edit</a>
-                    <a id="delete-btn" role="button" class="btn btn-danger btn-md" href="<?= base_url() ?>/User/delete?id=<?= $ds->id ?>">Hapus</a>
+                    <a id="edit-btn" role="button" class="btn btn-secondary btn-sm" data-id="<?= $ds->id ?>" data-toggle="modal" data-target="#edit"><i class="fas fa-edit"></i></a>
+                    <a id="delete-btn" role="button" class="btn btn-danger btn-sm" href="<?= base_url() ?>/User/delete?id=<?= $ds->id ?>"><i class="fas fa-trash"></i></a>
                   </td>
                 <?php } ?>
                 </tr>

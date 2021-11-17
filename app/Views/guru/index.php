@@ -44,7 +44,8 @@
                 <tr>
                     <th>No</th>
                     <th>NIP</th>
-                    <th>Nama Guru</th>
+                    <th>Nama Depan</th>
+                    <th>Nama Belakang</th>
                     <th>Alamat</th>
                     <th>Email</th>
                     <th>No. Telp</th>
@@ -57,7 +58,8 @@
                 <tr>
                     <td><?= $i++ ?></td>
                     <td><?= $g->nip ?></td>
-                    <td><?= $g->nama_guru ?></td>
+                    <td><?= $g->first_name ?></td>
+                    <td><?= $g->last_name ?></td>
                     <td><?= $g->alamat ?></td>
                     <th><?= $g->email ?></th>
                     <td><?= $g->no_telp ?></td>
@@ -72,7 +74,8 @@
                 <tr>
                     <th>No</th>
                     <th>NIP</th>
-                    <th>Nama Guru</th>
+                    <th>Nama Depan</th>
+                    <th>Nama Belakang</th>
                     <th>Alamat</th>
                     <th>Email</th>
                     <th>No. Telp</th>
@@ -96,8 +99,12 @@
                     <input type="text" class="form-control" id="nip" name="nip" placeholder="NIP">
                   </div>
                   <div class="form-group">
-                    <label for="nama_guru">Nama Guru</label>
-                    <input type="text" class="form-control" id="nama_guru" name="nama_guru" placeholder="Nama Guru">
+                    <label for="first_name">Nama Depan</label>
+                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Nama Depan">
+                  </div>
+                  <div class="form-group">
+                    <label for="last_name">Nama Belakang</label>
+                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Nama Belakang">
                   </div>
                   <div class="form-group">
                     <label for="alamat">Alamat</label>
@@ -138,8 +145,12 @@
                     <input type="text" class="form-control" id="nip-edit" name="nip" placeholder="NIP">
                   </div>
                   <div class="form-group">
-                    <label for="nama_guru-edit">Nama Guru</label>
-                    <input type="text" class="form-control" id="nama_guru-edit" name="nama_guru" placeholder="Nama Guru">
+                    <label for="first_name-edit">Nama Depan</label>
+                    <input type="text" class="form-control" id="first_name-edit" name="first_name-edit" placeholder="Nama Depan">
+                  </div>
+                  <div class="form-group">
+                    <label for="last_name-edit">Nama Belakang</label>
+                    <input type="text" class="form-control" id="last_name-edit" name="last_name-edit" placeholder="Nama Belakang">
                   </div>
                   <div class="form-group">
                     <label for="alamat-edit">Alamat</label>
@@ -226,7 +237,8 @@
     });
     $('#submit-create').on('click', function () {
       var nip = $('#nip').val();
-      var nama_guru = $('#nama_guru').val();
+      var first_name = $('#first_name').val();
+      var last_name = $('#last_name').val();
       var alamat = $('#alamat').val();
       var email = $('#email').val();
       var no_telp = $('#no_telp').val();
@@ -235,7 +247,8 @@
         type: 'POST',
         data: {
           'nip': nip,
-          'nama_guru': nama_guru,
+          'first_name': first_name,
+          'last_name': last_name,
           'alamat': alamat,
           'email': email,
           'no_telp': no_telp
@@ -268,7 +281,8 @@
           console.log(response);
           $.each(response, function (key, value) {
             $('#nip-edit').val(value.nip);
-            $('#nama_guru-edit').val(value.nama_guru);
+            $('#first_name-edit').val(value.first_name);
+            $('#last_name-edit').val(value.last_name);
             $('#alamat-edit').val(value.alamat);
             $('#email-edit').val(value.email);
             $('#no_telp-edit').val(value.no_telp);
@@ -324,7 +338,8 @@
             $('#masterguru').DataTable().row.add([
               i,
               value.nip,
-              value.nama_guru,
+              value.first_name,
+              value.last_name,
               value.alamat,
               value.email,
               value.no_telp,
