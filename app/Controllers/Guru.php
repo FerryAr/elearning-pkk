@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use CodeIgniter\Commands\Server\Serve;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as ReaderXlsx;
@@ -36,6 +37,135 @@ class Guru extends BaseController
         echo view('_template/header', $data);
         echo view('guru/index');
         echo view('_template/footer');
+    }
+
+    public function json_read_all_guru() {
+        $arr = [];
+        if($this->request->isAJAX()) {
+            $db = db_connect();
+            $query = $db->table('guru')
+                ->select('guru.id, guru.nip, guru.nama_guru, guru.email, guru.alamat, guru.no_telp')
+                ->get()->getResult();
+            foreach($query as $q) {
+                array_push($arr, array(
+                    'id' => $q->id,
+                    'nip' => $q->nip,
+                    'nama_guru' => $q->nama_guru,
+                    'email' => $q->email,
+                    'alamat' => $q->alamat,
+                    'no_telp' => $q->no_telp,
+                ));
+            }
+            header('Content-Type: application/json');
+            echo json_encode($arr);
+        }
+    }
+
+    // Create Data Guru
+    public function create() {
+        $request = Service('request');
+        if($request->isAJAX()) {
+            $db = db_connect();
+            $data = array(
+                'nip' => $request->getPost('nip'),
+                'nama_guru' => $request->getPost('nama_guru'),
+                'email' => $request->getPost('email'),
+                'alamat' => $request->getPost('alamat'),
+                'no_telp' => $request->getPost('no_telp'),
+            );
+           $query = $db->table('guru')->insert($data);
+            if($query) {
+                $arr = array(
+                    'msg' => 'Data guru berhasil ditambahkan',
+                );
+                header('Content-Type: application/json');
+                echo json_encode($arr);
+            } else {
+                $arr = array(
+                    'msg' => 'Data guru gagal ditambahkan',
+                );
+                header('Content-Type: application/json');
+                echo json_encode($arr);
+            }
+        }
+    }
+
+    public function edit() {
+        $request = service('request');
+        if($request->isAJAX()) {
+            $db = db_connect();
+            $data = array(
+                'nip' => $request->getPost('nip'),
+                'nama_guru' => $request->getPost('nama_guru'),
+                'email' => $request->getPost('email'),
+                'alamat' => $request->getPost('alamat'),
+                'no_telp' => $request->getPost('no_telp'),
+            );
+            $query = $db->table('guru')
+                ->where('id', $request->getPost('id'))
+                ->update($data);
+            if($query) {
+                $arr = array(
+                    'msg' => 'Data guru berhasil diubah',
+                );
+                header('Content-Type: application/json');
+                echo json_encode($arr);
+            } else {
+                $arr = array(
+                    'msg' => 'Data guru gagal diubah',
+                );
+                header('Content-Type: application/json');
+                echo json_encode($arr);
+            }
+        }
+    }
+    public function delete()
+    {
+        $session = \Config\Services::session();
+        if($this->request->getGet('id')) {
+            $id = $this->request->getGet('id');
+            $db = db_connect();
+            $users = $db->table('guru');
+            if($users->delete(['id' => $id])) {
+                $session->setFlashdata('msg', 'Hapus User berhasil');
+                return redirect()->to('Guru');
+            }
+            else {
+                $session->setFlashdata('msg', 'Hapus User gagal');
+                return redirect()->to('Guru');
+            }
+        }
+    }
+
+    public function json() {
+        $arr = [];
+        if($this->request->isAJAX()) {
+            $id = $this->request->getPost('id');
+            $db = db_connect();
+            $query = $db->table('guru')
+                ->select('guru.id, guru.nip, guru.nama_guru, guru.email, guru.alamat, guru.no_telp')
+                ->where('guru.id', $id)
+                ->get()->getResult();
+            foreach($query as $q) {
+                $id = $q->id;
+                $nip = $q->nip;
+                $nama_guru = $q->nama_guru;
+                $email = $q->email;
+                $alamat = $q->alamat;
+                $no_telp = $q->no_telp;
+                array_push($arr, ['id' => $id, 'nip' => $nip, 'nama_guru' => $nama_guru, 'email' => $email, 'alamat' => $alamat, 'no_telp' => $no_telp]);
+                // array_push($arr, [
+                //     'id' => $q->id,
+                //     'nip' => $q->nip,
+                //     'nama_guru' => $q->nama_guru,
+                //     'email' => $q->email,
+                //     'alamat' => $q->alamat,
+                //     'no_telp' => $q->no_telp,
+                // ]);
+            }
+            header('Content-Type: application/json');
+            echo json_encode($arr);
+        }
     }
 
     public function import_excel() {
