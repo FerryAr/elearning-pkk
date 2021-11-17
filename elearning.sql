@@ -86,7 +86,7 @@ CREATE TABLE `auth_logins` (
   PRIMARY KEY (`id`),
   KEY `email` (`email`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
 
 INSERT INTO `auth_logins` (`id`, `ip_address`, `email`, `user_id`, `date`, `success`) VALUES
 (2,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-09-19 13:29:28',	1),
@@ -126,7 +126,11 @@ INSERT INTO `auth_logins` (`id`, `ip_address`, `email`, `user_id`, `date`, `succ
 (36,	'127.0.0.1',	'ferryar789@gmail.com',	NULL,	'2021-11-12 06:03:44',	0),
 (37,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-12 06:03:54',	1),
 (38,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-12 15:38:40',	1),
-(39,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-13 15:50:40',	1);
+(39,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-13 15:50:40',	1),
+(40,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-13 19:49:22',	1),
+(41,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-14 02:56:43',	1),
+(42,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-14 19:14:30',	1),
+(43,	'127.0.0.1',	'ferryar789@gmail.com',	1,	'2021-11-17 15:13:43',	1);
 
 DROP TABLE IF EXISTS `auth_permissions`;
 CREATE TABLE `auth_permissions` (
@@ -180,16 +184,18 @@ DROP TABLE IF EXISTS `guru`;
 CREATE TABLE `guru` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nip` varchar(256) NOT NULL,
-  `nama_guru` varchar(256) NOT NULL,
+  `first_name` varchar(256) NOT NULL,
+  `last_name` varchar(256) DEFAULT NULL,
   `email` varchar(256) NOT NULL,
   `alamat` text NOT NULL,
   `no_telp` varchar(15) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
-INSERT INTO `guru` (`id`, `nip`, `nama_guru`, `email`, `alamat`, `no_telp`) VALUES
-(1,	'1001',	'guru1',	'guru1@gmail.com',	'Wonosobo',	'+628'),
-(2,	'1002',	'guru2',	'guru2@gmail.com',	'test',	'62');
+INSERT INTO `guru` (`id`, `nip`, `first_name`, `last_name`, `email`, `alamat`, `no_telp`) VALUES
+(1,	'1001',	'guru1',	NULL,	'guru1@gmail.com',	'Wonosobo',	'+628122'),
+(2,	'1002',	'guru2',	NULL,	'guru2@gmail.com',	'test',	'62'),
+(4,	'1003',	'guru3',	'mm',	'guru3@gmail.com',	'wsb',	'+628122');
 
 DROP TABLE IF EXISTS `jurusan`;
 CREATE TABLE `jurusan` (
@@ -292,4 +298,4 @@ INSERT INTO `users` (`id`, `email`, `username`, `password_hash`, `reset_hash`, `
 (1,	'ferryar789@gmail.com',	'azrl78',	'$2y$10$cp.R4vNub1bGffM1ehG1X.LMFvL7bJqgTzPhv08MfdlmNjVMFgq76',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1,	0,	'2021-09-16 05:51:51',	'2021-11-10 19:22:41',	NULL),
 (5,	'guru1@gmail.com',	'guru1',	'$2y$10$33tIv1evCSzie5xbx41DNugj9EFh2FiEhT7qdfz.1jtyK8b6yRlMS',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1,	0,	'2021-11-10 20:05:49',	'2021-11-10 20:05:49',	NULL);
 
--- 2021-11-13 23:06:05
+-- 2021-11-17 23:03:11
