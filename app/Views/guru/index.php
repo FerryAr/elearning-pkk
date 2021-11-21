@@ -294,7 +294,8 @@
     $('#submit-edit').on('click', function () {
       let id = $('#id-edit').val();
       let nip = $('#nip-edit').val();
-      let nama_guru = $('#nama_guru-edit').val();
+      let first_name = $('#first_name-edit').val();
+      let last_name = $('#last_name-edit').val();
       let alamat = $('#alamat-edit').val();
       let email = $('#email-edit').val();
       let no_telp = $('#no_telp-edit').val();
@@ -304,7 +305,8 @@
         data: {
           'id': id,
           'nip': nip,
-          'nama_guru': nama_guru,
+          'first_name': first_name,
+          'last_name': last_name, 
           'alamat': alamat,
           'email': email,
           'no_telp': no_telp
@@ -320,6 +322,9 @@
           $.each(response, function (key, value) {
             alert(value);
           });
+        },
+        error: function (request, status, error) {
+          alert(request.responseText);
         }
       });
     });

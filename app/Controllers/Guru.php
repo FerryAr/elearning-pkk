@@ -14,12 +14,12 @@ class Guru extends BaseController
     public function index()
     {
         helper('auth');
-        if(logged_in()) {
-            if(!in_groups(2)) {
+        if (logged_in()) {
+            if (!in_groups(2)) {
                 return redirect()->to('home');
             }
         } else {
-           return redirect()->to('login');
+            return redirect()->to('login');
         }
         $db = db_connect();
         $query = $db->table('guru')
@@ -38,14 +38,15 @@ class Guru extends BaseController
         echo view('_template/footer');
     }
 
-    public function json_read_all_guru() {
+    public function json_read_all_guru()
+    {
         $arr = [];
-        if($this->request->isAJAX()) {
+        if ($this->request->isAJAX()) {
             $db = db_connect();
             $query = $db->table('guru')
                 ->select('guru.id, guru.nip, guru.first_name, guru.last_name, guru.email, guru.alamat, guru.no_telp')
                 ->get()->getResult();
-            foreach($query as $q) {
+            foreach ($query as $q) {
                 array_push($arr, array(
                     'id' => $q->id,
                     'nip' => $q->nip,
@@ -62,9 +63,10 @@ class Guru extends BaseController
     }
 
     // Create Data Guru
-    public function create() {
+    public function create()
+    {
         $request = Service('request');
-        if($request->isAJAX()) {
+        if ($request->isAJAX()) {
             $db = db_connect();
             $data = array(
                 'nip' => $request->getPost('nip'),
@@ -74,8 +76,8 @@ class Guru extends BaseController
                 'alamat' => $request->getPost('alamat'),
                 'no_telp' => $request->getPost('no_telp'),
             );
-           $query = $db->table('guru')->insert($data);
-            if($query) {
+            $query = $db->table('guru')->insert($data);
+            if ($query) {
                 $arr = array(
                     'msg' => 'Data guru berhasil ditambahkan',
                 );
@@ -91,13 +93,14 @@ class Guru extends BaseController
         }
     }
 
-    public function edit() {
+    public function edit()
+    {
         $request = service('request');
-        if($request->isAJAX()) {
+        if ($request->isAJAX()) {
             $db = db_connect();
             $data = array(
                 'nip' => $request->getPost('nip'),
-                'fist_name' => $request->getPost('first_name'),
+                'first_name' => $request->getPost('first_name'),
                 'last_name' => $request->getPost('last_name'),
                 'email' => $request->getPost('email'),
                 'alamat' => $request->getPost('alamat'),
@@ -106,7 +109,7 @@ class Guru extends BaseController
             $query = $db->table('guru')
                 ->where('id', $request->getPost('id'))
                 ->update($data);
-            if($query) {
+            if ($query) {
                 $arr = array(
                     'msg' => 'Data guru berhasil diubah',
                 );
@@ -124,31 +127,31 @@ class Guru extends BaseController
     public function delete()
     {
         $session = \Config\Services::session();
-        if($this->request->getGet('id')) {
+        if ($this->request->getGet('id')) {
             $id = $this->request->getGet('id');
             $db = db_connect();
             $users = $db->table('guru');
-            if($users->delete(['id' => $id])) {
+            if ($users->delete(['id' => $id])) {
                 $session->setFlashdata('msg', 'Hapus User berhasil');
                 return redirect()->to('Guru');
-            }
-            else {
+            } else {
                 $session->setFlashdata('msg', 'Hapus User gagal');
                 return redirect()->to('Guru');
             }
         }
     }
 
-    public function json() {
+    public function json()
+    {
         $arr = [];
-        if($this->request->isAJAX()) {
+        if ($this->request->isAJAX()) {
             $id = $this->request->getPost('id');
             $db = db_connect();
             $query = $db->table('guru')
                 ->select('guru.id, guru.nip, guru.first_name, guru.last_name, guru.email, guru.alamat, guru.no_telp')
                 ->where('guru.id', $id)
                 ->get()->getResult();
-            foreach($query as $q) {
+            foreach ($query as $q) {
                 $id = $q->id;
                 $nip = $q->nip;
                 $first_name = $q->first_name;
@@ -171,24 +174,25 @@ class Guru extends BaseController
         }
     }
 
-    public function import_excel() {
+    public function import_excel()
+    {
         $db = db_connect();
         $request = service('request');
         $file = $request->getFile('fileexcel');
-        if(! $file->isValid()) {
+        if (!$file->isValid()) {
             session()->setFlashdata('msg', 'File yang anda pilih tidak valid');
             header('Location: ' . base_url('guru'));
         }
-        if(empty($file)) {
+        if (empty($file)) {
             session()->setFlashdata('msg', 'File tidak boleh kosong!');
             return redirect()->to('guru');
         }
         $ext = $file->guessExtension();
-        if($ext == 'xls') {
+        if ($ext == 'xls') {
             $reader = new ReaderXls();
-        } elseif($ext == 'xlsx') {
+        } elseif ($ext == 'xlsx') {
             $reader = new ReaderXlsx();
-        } elseif($ext == 'csv') {
+        } elseif ($ext == 'csv') {
             $reader = new ReaderCsv();
         } else {
             session()->setFlashdata('msg', 'File yang diupload harus berformat .xls, .xlsx atau .csv');
@@ -196,52 +200,71 @@ class Guru extends BaseController
         }
         $spreadsheet = $reader->load($file->getTempName());
         $data = $spreadsheet->getActiveSheet()->toArray();
-        foreach($data as $x => $row) {
-            if($x == 0) {
+        foreach ($data as $x => $d) {
+            if ($x == 0) {
                 continue;
             }
-            $nip = $row[0];
-            $first_name = $row[1];
-            $last_name = $row[2];
-            $email = $row[3];
-            $no_telp = $row[4];
-            $alamat = $row[5];
-            $cekNip = $db->table('guru')->where('nip', $nip)->get()->getResult();
-            if(count($cekNip) > 0) {
-                $query = $db->table('guru')->where('nip', $nip)->update([
-                    'first_name' => $first_name,
-                    'last_name' => $last_name,
-                    'email' => $email,
-                    'no_telp' => $no_telp,
-                    'alamat' => $alamat
-                ]);
-                if($query) {
-                    session()->setFlashdata('msg', 'Data berhasil diimport');
-                    return redirect()->to('guru');
+            $nip = $d[0];
+            $first_name = $d[1];
+            $last_name = $d[2];
+            $email = $d[3];
+            $alamat = $d[4];
+            $no_telp = $d[5];
+
+            $cekNip = $db->table('guru')->where('nip', $nip)->countAllResults();
+            if ($cekNip > 0) {
+                $db->table('guru')
+                    ->where('nip', $nip)
+                    ->update(array(
+                        'nip' => $nip,
+                        'first_name' => $first_name,
+                        'last_name' => $last_name,
+                        'email' => $email,
+                        'alamat' => $alamat,
+                        'no_telp' => $no_telp,
+                    ));
+                if ($db->affectedRows() > 0) {
+                    echo '<head>';
+                    echo '<script>';
+                    echo 'alert("Data berhasil diimport"); window.location.href="' . base_url('guru') . '";';
+                    echo '</script>';
+                    echo '</head>';
                 } else {
-                    session()->setFlashdata('msg', 'Data gagal diimport');
-                    return redirect()->to('guru');
+                    echo '<head>';
+                    echo '<script>';
+                    echo 'alert("Data gagal diimport"); window.location.href="' . base_url('guru') . '";';
+                    echo '</script>';
+                    echo '</head>';
                 }
             } else {
-                $query = $db->table('guru')->insert([
+                $db->table('guru')->insert([
                     'nip' => $nip,
                     'first_name' => $first_name,
                     'last_name' => $last_name,
                     'email' => $email,
+                    'alamat' => $alamat,
                     'no_telp' => $no_telp,
-                    'alamat' => $alamat
                 ]);
-                if($query) {
-                    session()->setFlashdata('msg', 'Data berhasil diimport');
-                    return redirect()->to('guru');
+
+
+                if ($db->affectedRows() > 0) {
+                    echo '<head>';
+                    echo '<script>';
+                    echo 'alert("Data berhasil diimport"); window.location.href="' . base_url('guru') . '";';
+                    echo '</script>';
+                    echo '</head>';
                 } else {
-                    session()->setFlashdata('msg', 'Data gagal diimport');
-                    return redirect()->to('guru');
+                    echo '<head>';
+                    echo '<script>';
+                    echo 'alert("Data gagal diimport"); window.location.href="' . base_url('guru') . '";';
+                    echo '</script>';
+                    echo '</head>';
                 }
             }
         }
     }
-    public function export_guru() {
+    public function export_guru()
+    {
         $db = db_connect();
         $spreadsheet = new Spreadsheet();
         $query = $db->table('guru')
@@ -255,7 +278,7 @@ class Guru extends BaseController
         $spreadsheet->getActiveSheet()->setCellValue('E1', 'No Telp');
         $spreadsheet->getActiveSheet()->setCellValue('F1', 'Alamat');
         $i = 2;
-        foreach($query as $row) {
+        foreach ($query as $row) {
             $spreadsheet->getActiveSheet()->setCellValue('A' . $i, $row->nip);
             $spreadsheet->getActiveSheet()->setCellValue('B' . $i, $row->first_name);
             $spreadsheet->getActiveSheet()->setCellValue('C' . $i, $row->last_name);
