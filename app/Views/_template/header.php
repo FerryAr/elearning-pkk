@@ -216,7 +216,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./index3.html" class="nav-link">
+                <a href="<?= base_url('Siswa') ?>" class="nav-link <?php if($page == 'Data Master Siswa') {echo 'active';}?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Data Master Siswa</p>
                 </a>
