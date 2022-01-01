@@ -32,7 +32,7 @@
             </div>
             <!-- /.row (main row) -->
 
-            <table class="table table-bordered" id="mastersiswa">
+            <table class="table table-bordered" id="mastersiswa" width="100%">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -61,8 +61,8 @@
                             <td><?= $s->alamat ?></td>
                             <td><?= $s->tanggal_lahir ?></td>
                             <td>
-                                <a href="<?= base_url('siswa/edit/') . $s->nis ?>" class="btn btn-warning btn-sm">Edit</a>
-                                <a href="<?= base_url('siswa/delete/') . $s->nis ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus data?')">Delete</a>
+                                <a role="button" data-nis="<?= $s->nis ?>" data-toggle="modal" data-target="#edit" class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></a>
+                                <a href="<?= base_url('siswa/delete/') . $s->nis ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus data?')"><i class="fas fa-trash"></i></a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -109,7 +109,7 @@
                                 <div class="form-group">
                                     <label for="kelas">Kelas</label>
                                     <select class="form-control" id="kelas" name="kelas">
-                                        <option selected>Pilih Kelas</option>
+                                        <option selected disabled>Pilih Kelas</option>
                                         <?php foreach ($kelas as $k) : ?>
                                             <option value="<?= $k->id ?>"><?= $k->nama_kelas ?></option>
                                         <?php endforeach; ?>
@@ -133,14 +133,69 @@
                                 <button type="button" class="btn btn-primary" id="submit-create">Simpan</button>
                             </div>
                         </form>
-
                     </div>
-
-                </div><!-- /.container-fluid -->
+                </div>
+            </div>
+            <div class="modal fade" id="edit">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Edit Data</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="nis">NIS</label>
+                                    <input type="text" class="form-control" id="nis-edit" name="nis" placeholder="NIS">
+                                </div>
+                                <div class="form-group">
+                                    <label for="first_name">Nama Depan</label>
+                                    <input type="text" class="form-control" id="first_name-edit" name="first_name-edit" placeholder="Nama Depan">
+                                </div>
+                                <div class="form-group">
+                                    <label for="last_name">Nama Belakang</label>
+                                    <input type="text" class="form-control" id="last_name-edit" name="last_name-edit" placeholder="Nama Belakang">
+                                </div>
+                                <div class="form-group">
+                                    <label for="kelas">Kelas</label>
+                                    <select class="form-control" id="kelas-edit" name="kelas">
+                                        <option selected disabled>Pilih Kelas</option>
+                                        <?php foreach ($kelas as $k) : ?>
+                                            <option value="<?= $k->id ?>"><?= $k->nama_kelas ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email-edit">Email</label>
+                                    <input type="email" class="form-control" id="email-edit" name="email" placeholder="Email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="alamat-edit">Alamat</label>
+                                    <textarea class="form-control" id="alamat-edit" name="alamat-edit" rows="3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tanggal_lahir-edit">Tanggal Lahir</label>
+                                    <input type="date" class="form-control" id="tanggal_lahir-edit" name="tanggal_lahir">
+                                </div>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                <button type="button" class="btn btn-primary" id="submit-edit">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
-    <!-- /.content -->
+</div><!-- /.container-fluid -->
+
+<!-- /.content -->
 </div>
-<script src="<?php echo base_url(); ?>/assets/plugins/jquery/jquery.min.js"></script>
+<script src=" <?php echo base_url(); ?>/assets/plugins/jquery/jquery.min.js"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="<?php echo base_url(); ?>/assets/plugins/jquery-ui/jquery-ui.min.js"></script>
 <!-- Bootstrap 4 -->
@@ -159,7 +214,7 @@
 <script src="<?php echo base_url(); ?>/assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#mastersiswa').DataTable({
+        let table = $('#mastersiswa').DataTable({
             processing: true,
             "paging": true,
             "lengthChange": false,
@@ -175,6 +230,7 @@
                 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
         });
+        //new $.fn.dataTable.fixedHeader(table);
         $('#submit-create').on('click', function() {
             let nis = $('#nis').val();
             let first_name = $('#first_name').val();
@@ -208,9 +264,91 @@
                     $.each(response, function(key, value) {
                         alert(value);
                     });
+                    window.location.reload();
                     //$('#mastersiswa').DataTable().ajax.reload();
-                }, error: function(xhr, status, error) {
+                },
+                error: function(xhr, status, error) {
                     alert(xhr.responseText);
+                }
+            });
+        });
+        $('#edit').on('show.bs.modal', function(e) {
+            var nis = $(e.relatedTarget).data('nis');
+            console.log(nis);
+
+            $.ajax({
+                url: '<?= base_url('siswa/json') ?>',
+                type: 'POST',
+                data: {
+                    'nis': nis
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    $.each(response, function(key, value) {
+                        $('#nis-edit').val(value.nis);
+                        $('#first_name-edit').val(value.first_name);
+                        $('#last_name-edit').val(value.last_name);
+                        $('#kelas-edit').val(value.id_kelas);
+                        $('#email-edit').val(value.email);
+                        $('#alamat-edit').val(value.alamat);
+                        $('#tanggal_lahir-edit').val(value.tanggal_lahir);
+                    });
+                },
+                error: function(request, status, error) {
+                    console.log(request.responseText);
+                }
+            });
+        });
+        $('#submit-edit').on('click', function() {
+            let nis = $('#nis-edit').val();
+            let first_name = $('#first_name-edit').val();
+            let last_name = $('#last_name-edit').val();
+            let kelas = $('#kelas-edit option:selected').val();
+            let email = $('#email-edit').val();
+            let alamat = $('#alamat-edit').val();
+            let tanggal_lahir = $('#tanggal_lahir-edit').val();
+            $.ajax({
+                type: "POST",
+                url: "<?= base_url('siswa/edit') ?>",
+                data: {
+                    nis: nis,
+                    first_name: first_name,
+                    last_name: last_name,
+                    id_kelas: kelas,
+                    email: email,
+                    alamat: alamat,
+                    tanggal_lahir: tanggal_lahir
+                },
+                dataType: "json",
+                success: function(response) {
+                    $('#edit').modal('hide');
+                    $('#nis-edit').val('');
+                    $('#first_name-edit').val('');
+                    $('#last_name-edit').val('');
+                    $('#kelas-edit').val('');
+                    $('#email-edit').val('');
+                    $('#alamat-edit').val('');
+                    $('#tanggal_lahir-edit').val('');
+                    $.each(response, function(key, value) {
+                        alert(value);
+                    });
+                    window.location.reload();
+                    //$('#mastersiswa').DataTable().ajax.reload();
+                },
+                error: function(xhr, status, error) {
+                    alert(xhr.responseText);
+                }
+            });
+        });
+        $('#siswa-not').on('click', function() {
+            $.ajax({
+                type: "POST",
+                url: "<?= base_url('siswa/json_read_all_siswa') ?>",
+                //data: "data",
+                dataType: "json",
+                success: function (response) {
+                    console.log(response);
                 }
             });
         });

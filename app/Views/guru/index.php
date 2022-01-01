@@ -263,6 +263,7 @@
           $.each(response, function (key, value) { 
              alert(value);
           });
+          window.location.reload();
         }
       });
     });
@@ -322,6 +323,7 @@
           $.each(response, function (key, value) {
             alert(value);
           });
+          window.location.reload();
         },
         error: function (request, status, error) {
           alert(request.responseText);
