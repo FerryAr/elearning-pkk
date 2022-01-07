@@ -184,9 +184,10 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="<?= base_url('guru/import_excel') ?>" method="post" enctype="multipart/form-data">
+                        <a role="button" class="btn btn-secondary" href="<?= base_url('guru/format_import') ?>"><i class="fas fa-download"></i> Download Format Import Data</a>
+                        <form class="mt-3" action="<?= base_url('guru/import_excel') ?>" method="post" enctype="multipart/form-data">
                             <div class="form-group">
-                                <label for="file_excel">File</label>
+                                <label for="file_excel">File Excel</label>
                                 <input type="file" class="form-control" name="fileexcel" id="file_excel">
                             </div>
                             <div class="form-group">

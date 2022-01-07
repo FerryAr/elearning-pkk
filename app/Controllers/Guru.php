@@ -263,6 +263,25 @@ class Guru extends BaseController
             }
         }
     }
+    public function format_import()
+    {
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->setActiveSheetIndex(0);
+        $spreadsheet->getActiveSheet()->setCellValue('A1', 'NIP');
+        $spreadsheet->getActiveSheet()->setCellValue('B1', 'Nama Depan');
+        $spreadsheet->getActiveSheet()->setCellValue('C1', 'Nama Belakang');
+        $spreadsheet->getActiveSheet()->setCellValue('D1', 'Email');
+        $spreadsheet->getActiveSheet()->setCellValue('E1', 'No Telp');
+        $spreadsheet->getActiveSheet()->setCellValue('F1', 'Alamat');
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'Format Import Guru';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        ob_end_clean();
+        $writer->save('php://output');
+        die();
+    }
     public function export_guru()
     {
         $db = db_connect();
@@ -289,7 +308,7 @@ class Guru extends BaseController
         }
         $writer = new Xlsx($spreadsheet);
         $filename = 'Data Guru.xlsx';
-        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
         //$writer->save($filename);

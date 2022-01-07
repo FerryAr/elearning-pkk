@@ -9,8 +9,8 @@ class Siswa extends BaseController
     public function index()
     {
         helper('auth');
-        if(logged_in()) {
-            if(!in_groups(2)) {
+        if (logged_in()) {
+            if (!in_groups(2)) {
                 return redirect()->to('home');
             }
         } else {
@@ -22,8 +22,8 @@ class Siswa extends BaseController
             ->join('kelas', 'kelas.id = siswa.id_kelas')
             ->join('jurusan', 'jurusan.id = kelas.id_jurusan')
             ->join('users', 'users.email = siswa.email')
-            ->join('auth_groups_users', 'users.id=auth_groups_users.user_id')
-            ->where('auth_groups_users.group_id', 4)
+            // ->join('auth_groups_users', 'users.id=auth_groups_users.user_id')
+            // ->where('auth_groups_users.group_id', 4)
             ->get()
             ->getResult();
         $kelas = $db->table('kelas')
@@ -34,14 +34,15 @@ class Siswa extends BaseController
             'siswa' => $query,
             'title' => 'Data Master Siswa | Elearning',
             'page' => 'Data Master Siswa',
-            'kelas' => $kelas
+            'kelas' => $kelas,
         );
         echo view('_template/header', $data);
         echo view('siswa/index');
         echo view('_template/footer');
     }
-    public function json() {
-        if($this->request->isAJAX()) {
+    public function json()
+    {
+        if ($this->request->isAJAX()) {
             $arr = [];
             $db = db_connect();
             $nis = $this->request->getPost('nis');
@@ -54,7 +55,8 @@ class Siswa extends BaseController
                 ->get()
                 ->getResult();
             foreach ($query as $row) {
-                array_push($arr, 
+                array_push(
+                    $arr,
                     array(
                         'nis' => $row->nis,
                         'first_name' => $row->first_name,
@@ -71,8 +73,9 @@ class Siswa extends BaseController
         }
     }
 
-    public function create() {
-        if($this->request->isAJAX()) {
+    public function create()
+    {
+        if ($this->request->isAJAX()) {
             $db = db_connect();
             $data = array(
                 'nis' => $this->request->getPost('nis'),
@@ -84,7 +87,7 @@ class Siswa extends BaseController
                 'id_kelas' => $this->request->getPost('id_kelas')
             );
             $query = $db->table('siswa')->insert($data);
-            if($query) {
+            if ($query) {
                 $response = array(
                     'msg' => 'Data berhasil disimpan'
                 );
@@ -97,38 +100,11 @@ class Siswa extends BaseController
                 header('Content-Type: application/json');
                 echo json_encode($response);
             }
-            
         }
     }
-    public function json_read_all_siswa() {
-        if($this->request->isAJAX()) {
-            $db = db_connect();
-            $arr = [];
-            $query = $db->table('siswa')
-                ->select('siswa.nis, siswa.first_name, siswa.last_name, siswa.email, siswa.alamat, siswa.tanggal_lahir')
-                // ->join('kelas', 'kelas.id = siswa.id_kelas', 'inner')
-                // ->join('jurusan', 'jurusan.id = kelas.id_jurusan', 'inner')
-                //->join('users', 'users.email = siswa.email', 'inner')
-                //->join('auth_groups_users', 'users.id=auth_groups_users.user_id')
-                ->where('siswa.id_kelas', NULL)
-                ->get()
-                ->getResult();
-            foreach($query as $q) {
-                array_push($arr, array(
-                    'nis' => $q->nis,
-                    'first_name' => $q->first_name,
-                    'last_name' => $q->last_name,
-                    'email' => $q->email,
-                    'alamat' => $q->alamat,
-                    'tanggal_lahir' => $q->tanggal_lahir
-                ));
-            }
-            header('Content-Type: application/json');
-            echo json_encode($arr);
-        }
-    }
-    public function edit() {
-        if($this->request->isAJAX()) {
+    public function edit()
+    {
+        if ($this->request->isAJAX()) {
             $db = db_connect();
             $data = array(
                 'nis' => $this->request->getPost('nis'),
@@ -140,7 +116,7 @@ class Siswa extends BaseController
                 'id_kelas' => $this->request->getPost('id_kelas')
             );
             $query = $db->table('siswa')->where('nis', $this->request->getPost('nis'))->update($data);
-            if($query) {
+            if ($query) {
                 $response = array(
                     'msg' => 'Data berhasil diubah'
                 );

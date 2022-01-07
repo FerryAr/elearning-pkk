@@ -26,9 +26,9 @@
                     <button type="button" class="btn btn-secondary btn-md" data-toggle="modal" data-target="#import">Import Data</button>
                     <a href="<?= base_url('siswa/export_siswa') ?>" class="btn btn-success btn-md">Export Data</a>
                 </div>
-                <div class="d-flex justify-content-end mb-3">
+                <!-- <div class="d-flex justify-content-end mb-3">
                     <button type="button" class="btn btn-info btn-md" id="siswa-not">Tampilkan Semua Siswa</button>
-                </div>
+                </div> -->
             </div>
             <!-- /.row (main row) -->
 
@@ -341,16 +341,6 @@
                 }
             });
         });
-        $('#siswa-not').on('click', function() {
-            $.ajax({
-                type: "POST",
-                url: "<?= base_url('siswa/json_read_all_siswa') ?>",
-                //data: "data",
-                dataType: "json",
-                success: function (response) {
-                    console.log(response);
-                }
-            });
-        });
+
     });
 </script>
