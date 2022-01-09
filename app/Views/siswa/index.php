@@ -1,3 +1,12 @@
+<script>
+  <?php
+    if(!empty($_SESSION['msg'])) {
+      ?>
+        alert('<?php echo $_SESSION['msg']; ?>');
+      <?php
+    }
+  ?>
+</script>
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <div class="content-header">
@@ -62,7 +71,7 @@
                             <td><?= $s->tanggal_lahir ?></td>
                             <td>
                                 <a role="button" data-nis="<?= $s->nis ?>" data-toggle="modal" data-target="#edit" class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></a>
-                                <a href="<?= base_url('siswa/delete/') . $s->nis ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus data?')"><i class="fas fa-trash"></i></a>
+                                <a href="<?= base_url('siswa/delete?nis=') . $s->nis ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus data?')"><i class="fas fa-trash"></i></a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -92,23 +101,23 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form>
+                        <form method="POST" id="form-create">
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label for="nis">NIS</label>
-                                    <input type="text" class="form-control" id="nis" name="nis" placeholder="NIS">
+                                    <input type="text" class="form-control" id="nis" name="nis" placeholder="NIS" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="first_name">Nama Depan</label>
-                                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Nama Depan">
+                                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Nama Depan" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="last_name">Nama Belakang</label>
-                                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Nama Belakang">
+                                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Nama Belakang" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="kelas">Kelas</label>
-                                    <select class="form-control" id="kelas" name="kelas">
+                                    <select class="form-control" id="kelas" name="kelas" required>
                                         <option selected disabled>Pilih Kelas</option>
                                         <?php foreach ($kelas as $k) : ?>
                                             <option value="<?= $k->id ?>"><?= $k->nama_kelas ?></option>
@@ -117,20 +126,20 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="email">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="alamat">Alamat</label>
-                                    <textarea class="form-control" id="alamat" name="alamat" rows="3"></textarea>
+                                    <textarea class="form-control" id="alamat" name="alamat" rows="3" required></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label for="tanggal_lahir">Tanggal Lahir</label>
-                                    <input type="date" class="form-control" id="tanggal_lahir" name="tanggal_lahir">
+                                    <input type="date" class="form-control" id="tanggal_lahir" name="tanggal_lahir" required>
                                 </div>
                             </div>
                             <div class="modal-footer justify-content-between">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                <button type="button" class="btn btn-primary" id="submit-create">Simpan</button>
+                                <button type="submit" class="btn btn-primary" id="submit-create">Simpan</button>
                             </div>
                         </form>
                     </div>
@@ -145,23 +154,23 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form>
+                        <form method="POST" id="form-edit">
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label for="nis">NIS</label>
-                                    <input type="text" class="form-control" id="nis-edit" name="nis" placeholder="NIS">
+                                    <input type="text" class="form-control" id="nis-edit" name="nis" placeholder="NIS" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="first_name">Nama Depan</label>
-                                    <input type="text" class="form-control" id="first_name-edit" name="first_name-edit" placeholder="Nama Depan">
+                                    <input type="text" class="form-control" id="first_name-edit" name="first_name-edit" placeholder="Nama Depan" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="last_name">Nama Belakang</label>
-                                    <input type="text" class="form-control" id="last_name-edit" name="last_name-edit" placeholder="Nama Belakang">
+                                    <input type="text" class="form-control" id="last_name-edit" name="last_name-edit" placeholder="Nama Belakang" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="kelas">Kelas</label>
-                                    <select class="form-control" id="kelas-edit" name="kelas">
+                                    <select class="form-control" id="kelas-edit" name="kelas" required>
                                         <option selected disabled>Pilih Kelas</option>
                                         <?php foreach ($kelas as $k) : ?>
                                             <option value="<?= $k->id ?>"><?= $k->nama_kelas ?></option>
@@ -170,20 +179,20 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="email-edit">Email</label>
-                                    <input type="email" class="form-control" id="email-edit" name="email" placeholder="Email">
+                                    <input type="email" class="form-control" id="email-edit" name="email" placeholder="Email" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="alamat-edit">Alamat</label>
-                                    <textarea class="form-control" id="alamat-edit" name="alamat-edit" rows="3"></textarea>
+                                    <textarea class="form-control" id="alamat-edit" name="alamat-edit" rows="3" required></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label for="tanggal_lahir-edit">Tanggal Lahir</label>
-                                    <input type="date" class="form-control" id="tanggal_lahir-edit" name="tanggal_lahir">
+                                    <input type="date" class="form-control" id="tanggal_lahir-edit" name="tanggal_lahir" required>
                                 </div>
                             </div>
                             <div class="modal-footer justify-content-between">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                <button type="button" class="btn btn-primary" id="submit-edit">Simpan</button>
+                                <button type="submit" class="btn btn-primary" id="submit-edit">Simpan</button>
                             </div>
                         </form>
                     </div>
@@ -196,6 +205,7 @@
 <!-- /.content -->
 </div>
 <script src=" <?php echo base_url(); ?>/assets/plugins/jquery/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="<?php echo base_url(); ?>/assets/plugins/jquery-ui/jquery-ui.min.js"></script>
 <!-- Bootstrap 4 -->
@@ -231,7 +241,11 @@
             ],
         });
         //new $.fn.dataTable.fixedHeader(table);
-        $('#submit-create').on('click', function() {
+        $('#form-create').on('submit', function(e) {
+            e.preventDefault();
+            if(!$('#form-create').valid()) {
+                return false;
+            }
             let nis = $('#nis').val();
             let first_name = $('#first_name').val();
             let last_name = $('#last_name').val();
@@ -239,6 +253,7 @@
             let email = $('#email').val();
             let alamat = $('#alamat').val();
             let tanggal_lahir = $('#tanggal_lahir').val();
+
             $.ajax({
                 type: "POST",
                 url: "<?= base_url('siswa/create') ?>",
@@ -246,7 +261,7 @@
                     nis: nis,
                     first_name: first_name,
                     last_name: last_name,
-                    kelas: kelas,
+                    id_kelas: kelas,
                     email: email,
                     alamat: alamat,
                     tanggal_lahir: tanggal_lahir
@@ -300,7 +315,11 @@
                 }
             });
         });
-        $('#submit-edit').on('click', function() {
+        $('#form-edit').on('submit', function() {
+            e.preventDefault();
+            if(!$('#form-edit').valid()) {
+                return false;
+            }
             let nis = $('#nis-edit').val();
             let first_name = $('#first_name-edit').val();
             let last_name = $('#last_name-edit').val();

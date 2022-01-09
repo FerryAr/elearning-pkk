@@ -132,10 +132,10 @@ class Guru extends BaseController
             $db = db_connect();
             $users = $db->table('guru');
             if ($users->delete(['id' => $id])) {
-                $session->setFlashdata('msg', 'Hapus User berhasil');
+                $session->setFlashdata('msg', 'Hapus Guru berhasil');
                 return redirect()->to('Guru');
             } else {
-                $session->setFlashdata('msg', 'Hapus User gagal');
+                $session->setFlashdata('msg', 'Hapus Guru gagal');
                 return redirect()->to('Guru');
             }
         }
@@ -307,7 +307,7 @@ class Guru extends BaseController
             $i++;
         }
         $writer = new Xlsx($spreadsheet);
-        $filename = 'Data Guru.xlsx';
+        $filename = 'Data Guru';
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
